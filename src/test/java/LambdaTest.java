@@ -1,94 +1,77 @@
 import org.junit.Test;
 import ru.omsu.*;
-import java.util.Optional;
 
 import static org.junit.Assert.*;
 import static ru.omsu.LambdaDemo.*;
 import static ru.omsu.LambdaRunner.*;
 
 public class LambdaTest {
+    private String str1 = "test";
+    private String str2 = "1 23 456";
+    private Human human1 = new Human("Evdokimov", "Alexandr", "Victorovich", 43, Human.Gender.male);
+    private Human human2 = new Human("Hisamov", "Ruslan", "Rishatovich", 17, Human.Gender.male);
+    private Human human3 = new Human("Miller", "Elena", "Alexandrovna", 26, Human.Gender.female);
+    private Student student1 = new Student("Pervushina", "Alexandra", "Pavlovna", 19, Human.Gender.female,
+            "TPU", "Natural resources", "Petroleum Engineering");
+    private Student student2 = new Student("Pervushina", "Valeria", "Pavlovna", 24, Human.Gender.female,
+            "TPU", "Natural resources", "Petroleum Engineering");
+
     @Test
-    public void lengthTest(){
-        assertEquals(Optional.of(4), Optional.of(run(length, "test")));
+    public void lengthTest0() {
+        String str0 = "";
+        assertEquals(0, (int) length.apply(str0));
+        assertEquals(4, (int) length.apply(str1));
     }
 
     @Test
-    public void firstSymbolTest(){
-        assertEquals(Optional.of('t'), Optional.of(run(firstSymbol, "test")));
+    public void firstSymbolTest() {
+        assertEquals('t', (int) firstSymbol.apply(str1));
+        assertEquals('1', (int) firstSymbol.apply(str2));
     }
 
     @Test
-    public void containsSpaceTest0(){
-        assertEquals(Optional.of(true), Optional.of(run(containsSpace, "test")));
+    public void containsSpaceTest() {
+        assertTrue(containsSpace.apply(str1));
+        assertFalse(containsSpace.apply(str2));
     }
 
     @Test
-    public void containsSpaceTest1() {
-        assertEquals(Optional.of(false), Optional.of(run(containsSpace, "te st")));
+    public void getWordsCountTest() {
+        String str = "test,ts,te,st";
+        assertEquals(4, (int) getWordsCount.apply(str));
     }
 
     @Test
-    public void getWordsCountTest(){
-        assertEquals(Optional.of(4), Optional.of(run(getWordsCount, "test,te,st,ts")));
+    public void getAgeTest() {
+        assertEquals(43,(int) getAge.apply(human1));
+        assertEquals(17,(int) getAge.apply(human2));
+        assertEquals(19,(int) getAge.apply(student1));
+        assertEquals(24,(int) getAge.apply(student2));
     }
 
     @Test
-    public void ageTest0(){
-        assertEquals(Optional.of(43), Optional.of(run(getAge, new Human("Evdokimov", "Alexandr",
-                "Victorovich", 43, Human.Gender.male))));
+    public void sameSurnameTest0() {
+        assertTrue(run(equalsSurname,student1,student2));
+        assertFalse(run(equalsSurname,human1,human2));
     }
 
     @Test
-    public void ageTest1(){
-        assertEquals(Optional.of(20), Optional.of(run(getAge, new Student("Pervushina", "Alexandra",
-                "Pavlovna", 20, Human.Gender.female, "a","b", "c"))));
+    public void getFullNameTest0() {
+        String expected1="Evdokimov Alexandr Victorovich";
+        String expected2="Pervushina Alexandra Pavlovna";
+        assertEquals(expected1,getFullName.apply(human1));
+        assertEquals(expected2,getFullName.apply(student1));
     }
 
     @Test
-    public void sameSurnameTest0(){
-        assertTrue(run(equalsSurname, new Human("Miller", "Victor", "Vladimirovich", 42, Human.Gender.male),
-                new Human("Miller", "Elena", "Victorovna", 38, Human.Gender.female)));
+    public void makeYearOlderTest() {
+        Human expected = new Human("Evdokimov", "Alexandr", "Victorovich", 44, Human.Gender.male);
+        assertEquals(expected,makeYearOlder.apply(human1));
     }
 
     @Test
-    public void sameSurnameTest1(){
-        assertTrue(run(equalsSurname, new Student("Pervushina", "Alexandra",
-                        "Pavlovna", 20, Human.Gender.female, "a","b", "c"),
-                new Student("Pervushina", "Valeria", "Pavlovna", 24, Human.Gender.female,
-                        "a", "b", "c")));
-    }
-
-    @Test
-    public void getFullNameTest0(){
-        assertEquals("Evdokimov Alexandr Victorovich", run(getFullName, new Human("Evdokimov", "Alexandr",
-                "Victorovich", 43, Human.Gender.male)));
-    }
-
-    @Test
-    public void getFullNameTest1(){
-        assertEquals("Pervushina Alexandra Pavlovna", run(getFullName, new Student("Pervushina", "Alexandra",
-                "Pavlovna", 20, Human.Gender.female, "a","b", "c")));
-    }
-
-    @Test
-    public void makeYearOlderTest(){
-        assertEquals(new Human("Evdokimov", "Alexandr",  "Victorovich", 44, Human.Gender.male),
-                run(makeYearOlder, new Human("Evdokimov", "Alexandr",  "Victorovich", 43, Human.Gender.male)));
-    }
-
-    @Test
-    public void threePersonsYoungerMaxAgeTest0(){
-        Human human0 = new Human("Evdokimov", "Alexandr", "Victorovich", 43, Human.Gender.male);
-        Human human1 = new Human("Hisamov", "Ruslan", "Rishatovich", 17, Human.Gender.male);
-        Human human2 = new Human("Miller", "Elena", "Alexandrovna", 15, Human.Gender.female);
-        assertTrue(run(threePersonsYoungerMaxAge, human0, human1, human2, 45));
-    }
-
-    @Test
-    public void threePersonsYoungerMaxAgeTest1() {
-        Human human0 = new Human("Evdokimov", "Alexandr", "Victorovich", 43, Human.Gender.male);
-        Human human1 = new Human("Hisamov", "Ruslan", "Rishatovich", 17, Human.Gender.male);
-        Human human2 = new Human("Miller", "Elena", "Alexandrovna", 15, Human.Gender.female);
-        assertFalse(run(threePersonsYoungerMaxAge, human0, human1, human2, 10));
+    public void threePersonsYoungerMaxAgeTest() {
+        assertTrue( threePersonsYoungerMaxAge.apply(human1,human2,human3,45));
+        assertFalse(threePersonsYoungerMaxAge.apply(human1,human2,human3,10));
     }
 }
